@@ -7,6 +7,7 @@ from string import join
 from urllib import urlencode
 from urlparse import urlunparse
 
+from course_blocks.tests.test_utils import EnableTransformerRegistryMixin
 from opaque_keys.edx.locator import CourseLocator
 from student.models import CourseEnrollment
 from student.tests.factories import AdminFactory, CourseEnrollmentFactory, UserFactory
@@ -16,7 +17,7 @@ from xmodule.modulestore.tests.factories import ToyCourseFactory
 from .test_utils import deserialize_usage_key
 
 
-class TestBlocksView(SharedModuleStoreTestCase):
+class TestBlocksView(EnableTransformerRegistryMixin, SharedModuleStoreTestCase):
     """
     Test class for BlocksView
     """

@@ -207,12 +207,12 @@ class SplitTestTransformerTestCase(CourseStructureTestCase):
         self.assertEquals(len(user_groups), 1)
 
         # calling twice should result in the same block set
+        block_structure1 = get_course_blocks(
+            self.user,
+            self.course.location,
+            self.transformers,
+        )
         with check_mongo_calls(0):
-            block_structure1 = get_course_blocks(
-                self.user,
-                self.course.location,
-                self.transformers,
-            )
             block_structure2 = get_course_blocks(
                 self.user,
                 self.course.location,

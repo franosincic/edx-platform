@@ -32,7 +32,7 @@ class TestBlockStructureTransformers(ChildrenMapTestMixin, TestCase):
         Adds the registered transformers to the self.transformers collection.
         """
         with mock_registered_transformers(self.registered_transformers):
-            self.transformers.add(self.registered_transformers)
+            self.transformers += self.registered_transformers
 
     def test_add_registered(self):
         self.add_mock_transformer()
@@ -40,7 +40,7 @@ class TestBlockStructureTransformers(ChildrenMapTestMixin, TestCase):
 
     def test_add_unregistered(self):
         with self.assertRaises(TransformerException):
-            self.transformers.add([self.UnregisteredTransformer])
+            self.transformers += [self.UnregisteredTransformer]
 
         self.assertEquals(self.transformers.transformers, [])
 

@@ -299,13 +299,7 @@ class BlockParentsMapTestCase(TransformerRegistryTestMixin, ModuleStoreTestCase)
         """
         return modulestore().get_item(self.xblock_keys[block_index])
 
-    def _check_results(
-            self,
-            user,
-            expected_accessible_blocks,
-            blocks_with_differing_access,
-            transformers,
-    ):
+    def _check_results(self, user, expected_accessible_blocks, blocks_with_differing_access, transformers):
         """
         Verifies the results of transforming the blocks in the
         course for the given user.
@@ -314,11 +308,9 @@ class BlockParentsMapTestCase(TransformerRegistryTestMixin, ModuleStoreTestCase)
         self.client.login(username=user.username, password=self.password)
         block_structure = get_course_blocks(user, self.course.location, transformers)
 
-        # Enumerate through all the blocks that were created in the
-        # course
         for i, xblock_key in enumerate(self.xblock_keys):
 
-            # verify existence of the block
+            # compute access results of the block
             block_structure_result = block_structure.has_block(xblock_key)
             has_access_result = bool(has_access(user, 'load', self.get_block(i), course_key=self.course.id))
 
@@ -331,7 +323,7 @@ class BlockParentsMapTestCase(TransformerRegistryTestMixin, ModuleStoreTestCase)
                 )
             )
 
-            # compare with has_access result
+            # compare with has_access_result
             if i in blocks_with_differing_access:
                 self.assertNotEqual(
                     block_structure_result,

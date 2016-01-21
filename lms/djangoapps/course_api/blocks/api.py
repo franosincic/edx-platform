@@ -48,16 +48,15 @@ def get_blocks(
     # create ordered list of transformers, adding BlocksAPITransformer at end.
     transformers = BlockStructureTransformers()
     if user is not None:
-        transformers.add(COURSE_BLOCK_ACCESS_TRANSFORMERS)
-        transformers.add([ProctoredExamTransformer()])
-    transformers.add([
+        transformers += COURSE_BLOCK_ACCESS_TRANSFORMERS + [ProctoredExamTransformer()]
+    transformers += [
         BlocksAPITransformer(
             block_counts,
             student_view_data,
             depth,
             nav_depth
         )
-    ])
+    ]
 
     # transform
     blocks = get_course_blocks(user, usage_key, transformers)

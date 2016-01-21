@@ -78,6 +78,16 @@ class BlockStructureManager(object):
             self.block_structure_cache.add(block_structure)
         return block_structure
 
+    def update_collected(self):
+        """
+        Updates the collected Block Structure for the root_block_usage_key.
+
+        Details: The cache is cleared and updated by collecting transformers
+        data from the modulestore.
+        """
+        self.clear()
+        self.get_collected()
+
     def clear(self):
         """
         Removes cached data for the block structure associated with the given

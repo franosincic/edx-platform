@@ -34,9 +34,9 @@ class BlockStructureTransformers(object):
         self.usage_info = usage_info
         self.transformers = []
         if transformers:
-            self.add(transformers)
+            self.__iadd__(transformers)
 
-    def add(self, transformers):
+    def __iadd__(self, transformers):
         """
         Adds the given transformers to the collection.
 
@@ -55,6 +55,7 @@ class BlockStructureTransformers(object):
             )
 
         self.transformers.extend(transformers)
+        return self
 
     @classmethod
     def collect(cls, block_structure):

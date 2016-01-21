@@ -91,6 +91,15 @@ def get_course_in_cache(course_key):
     return _get_block_structure_manager(course_key).get_collected()
 
 
+def update_course_in_cache(course_key):
+    """
+    A higher order function implemented on top of the
+    block_structure.updated_collected function that updates the block
+    structure in the cache for the given course_key.
+    """
+    return _get_block_structure_manager(course_key).update_collected()
+
+
 def clear_course_from_cache(course_key):
     """
     A higher order function implemented on top of the

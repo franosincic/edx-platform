@@ -2,14 +2,13 @@
 Command to load course blocks.
 """
 import logging
-from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from xmodule.modulestore.django import modulestore
 
-from ..api import get_course_in_cache
+from ...api import get_course_in_cache
 
 
 log = logging.getLogger(__name__)
@@ -24,16 +23,22 @@ class Command(BaseCommand):
     args = '<course_id course_id ...>'
     help = 'Generates and stores course blocks for one or more courses.'
 
-    option_list = BaseCommand.option_list + (
-        make_option('--all',
-                    action='store_true',
-                    default=False,
-                    help='Generate course blocks for all or specified courses.'),
-        make_option('--dags',
-                    action='store_true',
-                    default=False,
-                    help='Find DAGs for all or specified courses.'),
-    )
+    def add_arguments(self, parser):
+        """
+        Entry point for subclassed commands to add custom arguments.
+        """
+        parser.add_argument(
+            '--all',
+            help='Generate course blocks for all or specified courses.',
+            action='store_true',
+            default=False,
+        )
+        parser.add_argument(
+            '--dags',
+            help='Find and log DAGs for all or specified courses.',
+            action='store_true',
+            default=False,
+        )
 
     def handle(self, *args, **options):
 
@@ -54,7 +59,7 @@ class Command(BaseCommand):
             try:
                 block_structure = get_course_in_cache(course_key)
                 if options.get('dags'):
-                    self._find_dags(block_structure, course_key)
+                    self._find_and_log_dags(block_structure, course_key)
             except Exception as ex:  # pylint: disable=broad-except
                 log.exception(
                     'An error occurred while generating course blocks for %s: %s',
@@ -64,7 +69,7 @@ class Command(BaseCommand):
 
         log.info('Finished generating course blocks.')
 
-    def _find_dags(self, block_structure, course_key):
+    def _find_and_log_dags(self, block_structure, course_key):
         """
         Finds all DAGs within the given block structure.
 

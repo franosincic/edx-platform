@@ -8,7 +8,7 @@ from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory, ItemFactory
 from .. import generate_course_blocks
-from ...tests.test_utils import is_course_in_block_structure_cache
+from ....tests.test_utils import is_course_in_block_structure_cache
 
 
 class TestGenerateCourseBlocks(ModuleStoreTestCase):
@@ -49,12 +49,12 @@ class TestGenerateCourseBlocks(ModuleStoreTestCase):
         self._assert_courses_in_block_cache(self.course_1.id)
         self._assert_courses_not_in_block_cache(self.course_2.id)
 
-    @patch('lms.djangoapps.course_blocks.management.generate_course_blocks.log')
+    @patch('lms.djangoapps.course_blocks.management.commands.generate_course_blocks.log')
     def test_generate_no_dags(self, mock_log):
         self.command.handle(dags=True, all=True)
         self.assertEquals(mock_log.warning.call_count, 0)
 
-    @patch('lms.djangoapps.course_blocks.management.generate_course_blocks.log')
+    @patch('lms.djangoapps.course_blocks.management.commands.generate_course_blocks.log')
     def test_generate_with_dags(self, mock_log):
         with self.store.branch_setting(ModuleStoreEnum.Branch.draft_preferred):
             item1 = ItemFactory.create(parent=self.course_1)
@@ -67,7 +67,7 @@ class TestGenerateCourseBlocks(ModuleStoreTestCase):
         self.command.handle(dags=True, all=True)
         self.assertEquals(mock_log.warning.call_count, 1)
 
-    @patch('lms.djangoapps.course_blocks.management.generate_course_blocks.log')
+    @patch('lms.djangoapps.course_blocks.management.commands.generate_course_blocks.log')
     def test_not_found_key(self, mock_log):
         self.command.handle('fake/course/id', all=False)
         self.assertTrue(mock_log.exception.called)

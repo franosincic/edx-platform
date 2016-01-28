@@ -7,7 +7,6 @@ import json
 import ddt
 from mock import patch
 
-from opaque_keys.edx.locator import BlockUsageLocator
 from contentstore.utils import reverse_course_url, reverse_usage_url
 from contentstore.course_group_config import GroupConfiguration
 from contentstore.tests.utils import CourseTestCase
@@ -113,6 +112,7 @@ class HelperMethods(object):
             data={'metadata': group_access_content}
         )
 
+        self.course.children.append(vertical.location)
         self.save_course()
 
         return vertical, problem
@@ -679,94 +679,44 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
 
         self.assertEqual(actual, expected)
 
-    @ddt.data(ModuleStoreEnum.Type.split)
+    @ddt.data(ModuleStoreEnum.Type.mongo, ModuleStoreEnum.Type.split)
     def test_can_get_correct_usage_info_with_orphan(self, module_store_type):
         """
         Test if content group json updated successfully with usage information even if there is
         an orphan in content group.
         """
-        with self.store.default_store(module_store_type):
+        self.course = CourseFactory.create(default_store=module_store_type)
+        self._add_user_partitions(count=1, scheme_id='cohort')
+        vertical, problem = self._create_problem_with_content_group(cid=0, group_id=1, name_suffix='0')
 
-            split_course = CourseFactory.create()
+        # Assert that there is no orphan in the course yet.
+        self.assertEqual(len(self.store.get_orphans(self.course.id)), 0)
 
-            # Create user partition
-            split_course.user_partitions = [
-                UserPartition(
-                    0, 'Name 0', 'Description 0',
-                    [Group(0, 'Group A'), Group(1, 'Group B'), Group(2, 'Group C')],
-                    scheme=None, scheme_id='cohort'
-                )]
-            split_course.save()
+        # Update problem(created earlier) to an orphan.
+        with self.store.branch_setting(ModuleStoreEnum.Branch.published_only):
+            vertical = self.store.get_item(vertical.location)
+            vertical.children.remove(problem.location)
+            self.store.update_item(vertical, self.user.id)
 
-            # Create a problem with content group
-            chapter = self.store.create_child(
-                self.user.id, split_course.location,
-                block_type='chapter',
-                block_id='chapter1',
-                fields={'display_name': 'Chapter1'}
-            )
-            sequential = self.store.create_child(
-                None, chapter.location,
-                block_type='sequential',
-                block_id='subsection1',
-                fields={'display_name': 'Subsection1'}
-            )
-            vertical = self.store.create_child(
-                None, sequential.location,
-                block_type='vertical',
-                block_id='vertical1',
-                fields={'display_name': 'Unit1'}
-            )
-            test_problem = self.store.create_child(
-                self.user.id,
-                vertical.location,
-                block_type='problem',
-                block_id='problem1',
-                fields={'display_name': 'Problem1', 'data': '<problem></problem>'}
-            )
+        # Assert that the problem is orphan now.
+        self.assertIn(problem.location, self.store.get_orphans(self.course.id))
 
-            # Group access content
-            group_access_content = {'group_access': {0: [1]}}
-
-            # Add 'test_problem' to content group 'Group B'
-            self.client.ajax_post(
-                reverse_usage_url("xblock_handler", test_problem.location),
-                data={'metadata': group_access_content}
-            )
-
-            # Assert that there is no orphan in split_course yet.
-            self.assertEqual(len(self.store.get_orphans(split_course.id)), 0)
-
-            # Get the content group information
-            actual = GroupConfiguration.get_or_create_content_group(self.store, split_course)
-
-            # Get expected content group for the added problem.
+        # Get the expected content group information based on module store.
+        if module_store_type == ModuleStoreEnum.Type.mongo:
             expected = self._get_expected_content_group(usage_for_group=[
                 {
                     'url': '/container/{}'.format(vertical.location),
-                    'label': 'Unit1 / Problem1'
+                    'label': 'Test Unit 0 / Test Problem 0'
                 }
             ])
-
-            # Assert that actual content group information is same as expected one.
-            self.assertEqual(actual, expected)
-
-            # Make vertical(created earlier) an orphan.
-            sequential = self.store.get_item(BlockUsageLocator(split_course.id, 'sequential', 'subsection1'))
-            sequential.children.remove(vertical.location)
-            self.store.update_item(sequential, self.user.id)
-
-            # Assert that the vertical is orphan now.
-            self.assertIn(vertical.location, self.store.get_orphans(split_course.id))
-
-            # Get the content group information
-            actual = GroupConfiguration.get_or_create_content_group(self.store, split_course)
-
-            # Get expected content group information.
+        else:
             expected = self._get_expected_content_group(usage_for_group=[])
 
-            # Assert that actual content group information is same as expected one.
-            self.assertEqual(actual, expected)
+        # Get the actual content group information
+        actual = GroupConfiguration.get_or_create_content_group(self.store, self.course)
+
+        # Assert that actual content group information is same as expected one.
+        self.assertEqual(actual, expected)
 
     def test_can_use_one_content_group_in_multiple_problems(self):
         """
@@ -781,12 +731,12 @@ class GroupConfigurationsUsageInfoTestCase(CourseTestCase, HelperMethods):
 
         expected = self._get_expected_content_group(usage_for_group=[
             {
-                'url': '/container/{}'.format(vertical.location),
-                'label': 'Test Unit 0 / Test Problem 0'
-            },
-            {
                 'url': '/container/{}'.format(vertical1.location),
                 'label': 'Test Unit 1 / Test Problem 1'
+            },
+            {
+                'url': '/container/{}'.format(vertical.location),
+                'label': 'Test Unit 0 / Test Problem 0'
             }
         ])
 

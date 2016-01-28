@@ -237,22 +237,28 @@ def reset_student_attempts(course_id, student, module_state_key, delete_module=F
     # We need to do this *before* retrieving the `StudentModule` model,
     # because it's possible for a score to exist even if no student module exists.
     if delete_module:
-        sub_api.reset_score(
+        sub_api.reset_student_item(
             anonymous_id_for_user(student, course_id),
             course_id.to_deprecated_string(),
             module_state_key.to_deprecated_string(),
         )
 
-    module_to_reset = StudentModule.objects.get(
-        student_id=student.id,
-        course_id=course_id,
-        module_state_key=module_state_key
-    )
-
-    if delete_module:
-        module_to_reset.delete()
-    else:
-        _reset_module_attempts(module_to_reset)
+    try:
+        module_to_reset = StudentModule.objects.get(
+            student_id=student.id,
+            course_id=course_id,
+            module_state_key=module_state_key
+        )
+        if delete_module:
+            module_to_reset.delete()
+        else:
+            _reset_module_attempts(module_to_reset)
+    except StudentModule.DoesNotExist:
+        msg = (
+            u"No record found when deleting module {module_state_key}"
+            u"in course {course_id} for student {student_id}."
+        ).format(module_state_key=module_state_key, course_id=course_id, student_id=student_id)
+        logger.exception(msg)
 
 
 def _reset_module_attempts(studentmodule):

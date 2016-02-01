@@ -103,6 +103,9 @@ urlpatterns = (
     url(r'^api/credit/', include('openedx.core.djangoapps.credit.urls', app_name="credit", namespace='credit')),
     url(r'^rss_proxy/', include('rss_proxy.urls', namespace='rss_proxy')),
     url(r'^api/organizations/', include('organizations.urls', namespace='organizations')),
+
+    # Update session view
+    url(r'^lang_pref/session_language', 'lang_pref.views.update_session_language', name='session_language'),
 )
 
 if settings.FEATURES["ENABLE_COMBINED_LOGIN_REGISTRATION"]:

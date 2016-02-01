@@ -54,7 +54,9 @@
                         model.destroy(
                             {
                                 success: function() {
-                                    self.showMessage('Student Removed from certificate white list successfully.');
+                                    self.showMessage(
+                                        gettext('Student Removed from certificate white list successfully.')
+                                    );
                                 },
                                 error: this.showError(this),
                                 wait: true,
@@ -64,8 +66,8 @@
                     }
                     else{
                         this.showMessage(
-                            'Could not find Certificate Exception in white list. ' +
-                            'Please refresh the page and try again'
+                            gettext('Could not find Certificate Exception in white list. ' +
+                                'Please refresh the page and try again')
                         );
                     }
                 },
@@ -79,7 +81,7 @@
 
                 showMessage: function(message){
                     $(this.message_div +  ">p" ).remove();
-                    $(this.message_div).removeClass('hidden').append("<p>"+ gettext(message) + "</p>").focus();
+                    $(this.message_div).removeClass('hidden').append("<p>"+ message + "</p>").focus();
                     $(this.message_div).fadeOut(6000, "linear");
                 },
 
@@ -96,8 +98,7 @@
                             caller_object.showMessage(response.message);
                         }
                         catch(exception){
-                            caller_object.showMessage(
-                                "Server Error, Please refresh the page and try again.");
+                            caller_object.showMessage(gettext("Server Error, Please refresh the page and try again."));
                         }
                     };
                 }

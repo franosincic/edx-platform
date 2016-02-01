@@ -51,21 +51,24 @@
                         notes: notes,
                         new: true
                     });
+                    var message = "";
 
                     if(this.collection.findWhere(model)){
+                        message = gettext("<%= user %> already in exception list.");
                         this.showMessage(
-                                (user_name || user_email) + " already in exception list."
+                            _.escape(_.template(message, {user: (user_name || user_email)}))
                         );
                     }
                     else if(certificate_exception.isValid()){
+                        message = gettext("<%= user %> has been successfully added to the exception list. " +
+                            "Click Generate Exception Certificate below to send the certificate.");
                         certificate_exception.save(
                             null,
                             {
                                 success: this.showSuccess(
                                     this,
                                     true,
-                                    (user_name || user_email) + ' has been successfully added to the exception list.' +
-                                        ' Click Generate Exception Certificate below to send the certificate.'
+                                    _.escape(_.template(message, {user: (user_name || user_email)}))
                                 ),
                                 error: this.showError(this)
                             }
@@ -84,7 +87,7 @@
 
                 showMessage: function(message){
                     $(this.message_div +  ">p" ).remove();
-                    this.$(this.message_div).removeClass('hidden').append("<p>"+ gettext(message) + "</p>");
+                    this.$(this.message_div).removeClass('hidden').append("<p>"+ message + "</p>");
                 },
 
                 showSuccess: function(caller, add_model, message){
@@ -103,8 +106,8 @@
                             caller.showMessage(response_data.message);
                         }
                         catch(exception){
-                            caller.showMessage("" +
-                                "Server Error, Please refresh the page and try again."
+                            caller.showMessage(
+                                gettext("Server Error, Please refresh the page and try again.")
                             );
                         }
                     };

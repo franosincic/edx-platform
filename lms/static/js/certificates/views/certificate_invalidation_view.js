@@ -33,6 +33,7 @@
                 invalidateCertificate: function() {
                     var user = this.$("#certificate-invalidation-user").val();
                     var notes = this.$("#certificate-invalidation-notes").val();
+                    var message = "";
 
                     var certificate_invalidation = new CertificateInvalidationModel({
                         url: this.collection.url,
@@ -41,10 +42,9 @@
                     });
 
                     if (this.collection.findWhere({user: user})) {
-                        this.showMessage(
-                            gettext("Certificate of ") + user +
-                            gettext(" has already been invalidated. Please check your spelling and retry."
-                            ));
+                        message = gettext("Certificate of <%= user %> has already been invalidated. " +
+                            "Please check your spelling and retry.");
+                        this.showMessage(_.escape(_.template(message, {user: user})));
                     }
                     else if (certificate_invalidation.isValid()) {
                         var self = this;
@@ -53,9 +53,8 @@
 
                             success: function(model) {
                                 self.collection.add(model);
-                                self.showMessage(
-                                    gettext('Certificate has been successfully invalidated for ') + user + '.'
-                                );
+                                message = gettext('Certificate has been successfully invalidated for <%= user %>.');
+                                self.showMessage(_.escape(_.template(message, {user: user})));
                             },
 
                             error: function(model, response) {
@@ -112,7 +111,7 @@
 
                 showMessage: function(message) {
                     $(this.messages +  ">p" ).remove();
-                    this.$(this.messages).removeClass('hidden').append("<p>"+ gettext(message) + "</p>");
+                    this.$(this.messages).removeClass('hidden').append("<p>"+ message + "</p>");
                 }
 
             });

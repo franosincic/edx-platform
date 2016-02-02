@@ -534,8 +534,10 @@ class CourseWikiTest(UniqueCourseTest):
         content = "hello"
         self._open_editor()
         self.course_wiki_edit_page.replace_wiki_content(content)
+        # self.course_wiki_edit_page.check_xss()
         self.course_wiki_edit_page.save_wiki_content()
         actual_content = unicode(self.course_wiki_page.q(css='.wiki-article p').text[0])
+        # self.course_wiki_page.check_xss()
         self.assertEqual(content, actual_content)
 
 

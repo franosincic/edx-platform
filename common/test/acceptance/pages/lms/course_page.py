@@ -38,3 +38,10 @@ class CoursePage(PageObject):
         """
         tab_nav = TabNavPage(self.browser)
         return tab_name in tab_nav.tab_names
+
+    # def check_xss(self):
+    # def visit(self):
+    #     super_visit = super(CoursePage, self).visit()
+    #     # assert "<XSS" not in self.browser.page_source
+    #     # assert "&lt;XSS FOOBAR" in self.browser.page_source
+    #     return super_visit

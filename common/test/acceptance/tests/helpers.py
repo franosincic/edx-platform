@@ -641,7 +641,7 @@ class UniqueCourseTest(WebAppTest):
         self.course_info = {
             'org': 'test_org',
             'number': self.unique_id,
-            'run': 'test_run' + test_improper_escaping,
+            'run': 'test_run',
             'display_name': 'Test Course' + test_improper_escaping + self.unique_id
         }
 

@@ -45,3 +45,9 @@ class CoursePage(PageObject):
             deprecated=(default_store == 'draft')
         )
         return "/".join([BASE_URL, self.url_path, unicode(course_key)])
+
+    def check_xss(self):
+        assert "<XSS" not in self.browser.page_source
+        assert "&lt;XSS" in self.browser.page_source
+
+

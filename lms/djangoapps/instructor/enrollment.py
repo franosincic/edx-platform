@@ -218,7 +218,7 @@ def reset_student_attempts(course_id, student, module_state_key, delete_module=F
         submissions.SubmissionError: unexpected error occurred while resetting the score in the submissions API.
 
     """
-    user_id = anonymous_id_for_user(student, course_id),
+    user_id = anonymous_id_for_user(student, course_id)
     try:
         # A block may have children. Clear state on children first.
         block = modulestore().get_item(module_state_key)
@@ -233,7 +233,7 @@ def reset_student_attempts(course_id, student, module_state_key, delete_module=F
         # We trust blocks to clean dependencies as well, so openassessment will clear out any relevant submissions
         block_reset = getattr(block, "clear_state", None)
         if callable(block_reset):
-            block_reset(user_id=user_id, delete=delete_module)
+            block_reset(user_id=user_id, course_id=course_id, item_id=module_state_key, delete=delete_module)
     except ItemNotFoundError:
         log.warning("Could not find %s in modulestore when attempting to reset attempts.", module_state_key)
 

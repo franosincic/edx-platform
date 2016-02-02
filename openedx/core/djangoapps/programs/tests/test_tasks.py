@@ -10,11 +10,10 @@ import json
 import mock
 
 from oauth2_provider.tests.factories import ClientFactory
-from student.tests.factories import UserFactory
-
 from openedx.core.djangoapps.credentials.tests.mixins import CredentialsApiConfigMixin
 from openedx.core.djangoapps.programs.tests.mixins import ProgramsApiConfigMixin
 from openedx.core.djangoapps.programs import tasks
+from student.tests.factories import UserFactory
 
 
 class GetApiClientTestCase(TestCase, ProgramsApiConfigMixin):
@@ -98,7 +97,7 @@ class GetCompletedProgramsTestCase(TestCase):
         httpretty.register_uri(
             httpretty.POST,
             'http://test-server/programs/complete/',
-            body='[1, 2, 3]',
+            body='{"program_ids": [1, 2, 3]}',
             content_type='application/json',
         )
         payload = [
@@ -106,7 +105,7 @@ class GetCompletedProgramsTestCase(TestCase):
             {'course_id': 'test-course-2', 'mode': 'prof-ed'},
         ]
         result = tasks.get_completed_programs(test_client, payload)
-        self.assertEqual(httpretty.last_request().body, json.dumps(payload))
+        self.assertEqual(httpretty.last_request().body, json.dumps({'completed_courses': payload}))
         self.assertEqual(result, [1, 2, 3])
 
 
@@ -160,14 +159,14 @@ class AwardProgramCertificateTestCase(TestCase):
         """
         Ensure the correct API call gets made
         """
-        student = UserFactory(username='test-username')
+        test_username = 'test-username'
         test_client = EdxRestApiClient('http://test-server', jwt='test-token')
         httpretty.register_uri(
             httpretty.POST,
             'http://test-server/user_credentials/',
         )
-        tasks.award_program_certificate(test_client, student, 123)
-        self.assertEqual(httpretty.last_request().body, json.dumps({'program_id': 123, 'username': student.username}))
+        tasks.award_program_certificate(test_client, test_username, 123)
+        self.assertEqual(httpretty.last_request().body, json.dumps({'program_id': 123, 'username': test_username}))
 
 
 @ddt.ddt

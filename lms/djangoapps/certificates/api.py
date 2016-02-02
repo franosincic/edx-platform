@@ -125,7 +125,7 @@ def generate_user_certificates(student, course_key, course=None, insecure=False,
         generate_pdf=generate_pdf,
         forced_grade=forced_grade
     )
-    if is_passing_status(cert.status):
+    if CertificateStatuses.is_passing_status(cert.status):
         emit_certificate_event('created', student, course_key, course, {
             'user_id': student.id,
             'course_id': unicode(course_key),

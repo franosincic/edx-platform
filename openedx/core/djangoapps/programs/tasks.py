@@ -68,7 +68,7 @@ def get_completed_programs(client, course_certificates):
         list of program ids
 
     """
-    return client.programs.complete.post(course_certificates)
+    return client.programs.complete.post({'completed_courses': course_certificates})['program_ids']
 
 
 def get_awarded_certificate_programs(student):
@@ -91,15 +91,15 @@ def get_awarded_certificate_programs(student):
     ]
 
 
-def award_program_certificate(client, student, program_id):
+def award_program_certificate(client, username, program_id):
     """
     Issue a new certificate of completion to the given student for the given program.
 
     Args:
         client:
             credentials API client (EdxRestApiClient)
-        student:
-            User object representing the student
+        username:
+            The username of the student
         program_id:
             id of the completed program
 
@@ -107,7 +107,7 @@ def award_program_certificate(client, student, program_id):
         None
 
     """
-    client.user_credentials.post({'program_id': program_id, 'username': student.username})
+    client.user_credentials.post({'program_id': program_id, 'username': username})
 
 
 @task
@@ -144,15 +144,14 @@ def award_program_certificates(username):
 
     # generate a new certificate for each of the remaining programs.
     if new_program_ids:
-        LOGGER.debug('generating new program certificates for %s in programs: %r', username, new_program_ids)
         credentials_client = get_api_client(
             CredentialsApiConfig.current(),
             User.objects.get(username='FIXME-NO-SERVICE-USER')
         )
         for program_id in new_program_ids:
-            LOGGER.debug(
+            LOGGER.info(
                 'calling credentials service to issue certificate for user %s in program %s',
                 username,
                 program_id,
             )
-            award_program_certificate(credentials_client, student, program_id)
+            award_program_certificate(credentials_client, student.username, program_id)

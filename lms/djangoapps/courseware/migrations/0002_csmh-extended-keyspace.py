@@ -27,9 +27,4 @@ class Migration(migrations.Migration):
                 'get_latest_by': 'created',
             },
         ),
-        migrations.AlterField(
-            model_name='studentmodulehistory',
-            name='student_module',
-            field=models.ForeignKey(to='courseware.StudentModule', db_constraint=False),
-        ),
     ]

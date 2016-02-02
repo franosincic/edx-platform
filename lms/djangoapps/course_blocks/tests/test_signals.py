@@ -8,7 +8,7 @@ from xmodule.modulestore.tests.factories import CourseFactory
 
 from ..api import get_course_blocks, _get_block_structure_manager
 from ..transformers.visibility import VisibilityTransformer
-from .test_utils import is_course_in_block_structure_cache, EnableTransformerRegistryMixin
+from .helpers import is_course_in_block_structure_cache, EnableTransformerRegistryMixin
 
 
 class CourseBlocksSignalTest(EnableTransformerRegistryMixin, ModuleStoreTestCase):

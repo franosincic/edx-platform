@@ -6,7 +6,7 @@ import ddt
 from unittest import TestCase
 
 from ..transformer_registry import TransformerRegistry
-from .test_utils import MockTransformer, mock_registered_transformers
+from .helpers import MockTransformer, mock_registered_transformers
 
 
 class TestTransformer1(MockTransformer):

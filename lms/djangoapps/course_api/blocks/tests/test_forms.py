@@ -6,7 +6,7 @@ from django.http import Http404, QueryDict
 from urllib import urlencode
 from rest_framework.exceptions import PermissionDenied
 
-from course_blocks.tests.test_utils import EnableTransformerRegistryMixin
+from course_blocks.tests.helpers import EnableTransformerRegistryMixin
 from opaque_keys.edx.locator import CourseLocator
 from openedx.core.djangoapps.util.test_forms import FormTestMixin
 from student.models import CourseEnrollment

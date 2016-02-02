@@ -15,7 +15,7 @@ from xmodule.modulestore.tests.factories import CourseFactory
 
 from ...api import get_course_blocks
 from ..user_partitions import UserPartitionTransformer, _MergedGroupAccess
-from .test_helpers import CourseStructureTestCase, update_block
+from .helpers import CourseStructureTestCase, update_block
 
 
 class UserPartitionTestMixin(object):

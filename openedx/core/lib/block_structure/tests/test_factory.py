@@ -6,7 +6,7 @@ from xmodule.modulestore.exceptions import ItemNotFoundError
 
 from ..cache import BlockStructureCache
 from ..factory import BlockStructureFactory
-from .test_utils import (
+from .helpers import (
     MockCache, MockModulestoreFactory, ChildrenMapTestMixin
 )
 

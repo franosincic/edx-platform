@@ -4,7 +4,7 @@ Tests for VisibilityTransformer.
 import ddt
 
 from ..visibility import VisibilityTransformer
-from .test_helpers import BlockParentsMapTestCase, update_block
+from .helpers import BlockParentsMapTestCase, update_block
 
 
 @ddt.ddt

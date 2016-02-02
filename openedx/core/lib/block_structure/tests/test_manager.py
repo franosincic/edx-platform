@@ -5,7 +5,7 @@ from unittest import TestCase
 
 from ..manager import BlockStructureManager
 from ..transformers import BlockStructureTransformers
-from .test_utils import (
+from .helpers import (
     MockModulestoreFactory, MockCache, MockTransformer, ChildrenMapTestMixin, mock_registered_transformers
 )
 

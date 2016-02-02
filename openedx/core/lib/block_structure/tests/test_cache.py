@@ -4,7 +4,7 @@ Tests for block_structure/cache.py
 from unittest import TestCase
 
 from ..cache import BlockStructureCache
-from .test_utils import ChildrenMapTestMixin, MockCache, MockTransformer
+from .helpers import ChildrenMapTestMixin, MockCache, MockTransformer
 
 
 class TestBlockStructureCache(ChildrenMapTestMixin, TestCase):

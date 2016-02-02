@@ -7,7 +7,7 @@ from unittest import TestCase
 from ..block_structure import BlockStructureModulestoreData
 from ..exceptions import TransformerException
 from ..transformers import BlockStructureTransformers
-from .test_utils import (
+from .helpers import (
     ChildrenMapTestMixin, MockTransformer, mock_registered_transformers
 )
 

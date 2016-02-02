@@ -8,7 +8,7 @@ from mock import patch
 
 from courseware.tests.factories import BetaTesterFactory
 from ..start_date import StartDateTransformer, DEFAULT_START_DATE
-from .test_helpers import BlockParentsMapTestCase, update_block
+from .helpers import BlockParentsMapTestCase, update_block
 
 
 @ddt.ddt

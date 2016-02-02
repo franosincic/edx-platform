@@ -11,7 +11,7 @@ from xmodule.modulestore.tests.factories import check_mongo_calls, check_mongo_c
 
 from ...api import get_course_blocks
 from ..user_partitions import UserPartitionTransformer, _get_user_partition_groups
-from .test_helpers import CourseStructureTestCase, create_location
+from .helpers import CourseStructureTestCase, create_location
 
 
 @ddt.ddt

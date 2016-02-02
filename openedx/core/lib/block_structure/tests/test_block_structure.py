@@ -12,7 +12,7 @@ from openedx.core.lib.graph_traversals import traverse_post_order
 
 from ..block_structure import BlockStructure, BlockStructureModulestoreData
 from ..exceptions import TransformerException
-from .test_utils import MockXBlock, MockTransformer, ChildrenMapTestMixin
+from .helpers import MockXBlock, MockTransformer, ChildrenMapTestMixin
 
 
 @ddt.ddt

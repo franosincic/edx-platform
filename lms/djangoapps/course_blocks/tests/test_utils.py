@@ -21,6 +21,7 @@ class EnableTransformerRegistryMixin(object):
         TransformerRegistry.USE_PLUGIN_MANAGER = True
 
     def tearDown(self):
+        super(EnableTransformerRegistryMixin, self).tearDown()
         TransformerRegistry.USE_PLUGIN_MANAGER = False
 
 

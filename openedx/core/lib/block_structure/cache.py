@@ -23,7 +23,7 @@ class BlockStructureCache(object):
                 cache into which cacheable data of the block structure
                 is to be serialized.
         """
-        self.cache = cache
+        self._cache = cache
 
     def add(self, block_structure):
         """
@@ -44,7 +44,7 @@ class BlockStructureCache(object):
             block_structure._block_data_map
         )
         zp_data_to_cache = zpickle(data_to_cache)
-        self.cache.set(
+        self._cache.set(
             self._encode_root_cache_key(block_structure.root_block_usage_key),
             zp_data_to_cache
         )
@@ -75,7 +75,7 @@ class BlockStructureCache(object):
         """
 
         # Find root_block_usage_key in the cache.
-        zp_data_from_cache = self.cache.get(self._encode_root_cache_key(root_block_usage_key))
+        zp_data_from_cache = self._cache.get(self._encode_root_cache_key(root_block_usage_key))
         if not zp_data_from_cache:
             logger.debug(
                 "Did not find BlockStructure %r in the cache.",
@@ -108,7 +108,7 @@ class BlockStructureCache(object):
                 of the block structure that is to be removed from
                 the cache.
         """
-        self.cache.delete(self._encode_root_cache_key(root_block_usage_key))
+        self._cache.delete(self._encode_root_cache_key(root_block_usage_key))
         logger.debug(
             "Deleted BlockStructure %r from the cache.",
             root_block_usage_key,

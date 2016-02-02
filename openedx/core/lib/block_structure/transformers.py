@@ -12,7 +12,14 @@ logger = getLogger(__name__)  # pylint: disable=C0103
 
 class BlockStructureTransformers(object):
     """
-    Class for a collection of block structure transformers.
+    The BlockStructureTransformers class encapsulates an ordered list of block
+    structure transformers.  It uses the Transformer Registry to verify the
+    the registration status of added transformers and to collect their data.
+    It provides aggregate functionality for collection and ordered
+    transformation of the transformers.
+
+    Clients are expected to access the list of transformers through the
+    class' interface rather than directly.
     """
     def __init__(self, transformers=None, usage_info=None):
         """
@@ -32,7 +39,7 @@ class BlockStructureTransformers(object):
                 Transformer Registry.
         """
         self.usage_info = usage_info
-        self.transformers = []
+        self._transformers = []
         if transformers:
             self.__iadd__(transformers)
 
@@ -54,7 +61,7 @@ class BlockStructureTransformers(object):
                 "The following requested transformers are not registered: {}".format(unregistered_transformers)
             )
 
-        self.transformers.extend(transformers)
+        self._transformers.extend(transformers)
         return self
 
     @classmethod
@@ -74,7 +81,7 @@ class BlockStructureTransformers(object):
         The given block structure is transformed by each transformer in the
         collection, in the order that the transformers were added.
         """
-        for transformer in self.transformers:
+        for transformer in self._transformers:
             transformer.transform(self.usage_info, block_structure)
 
         # Prune the block structure to remove any unreachable blocks.

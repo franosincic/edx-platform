@@ -18,7 +18,6 @@ from courseware.models import StudentModule
 from edxmako.shortcuts import render_to_string
 from lang_pref import LANGUAGE_KEY
 
-from submissions import api as sub_api  # installed from the edx-submissions repository
 from student.models import anonymous_id_for_user
 from openedx.core.djangoapps.user_api.models import UserPreference
 
@@ -219,6 +218,7 @@ def reset_student_attempts(course_id, student, module_state_key, delete_module=F
         submissions.SubmissionError: unexpected error occurred while resetting the score in the submissions API.
 
     """
+    user_id = anonymous_id_for_user(student, course_id),
     try:
         # A block may have children. Clear state on children first.
         block = modulestore().get_item(module_state_key)
@@ -229,19 +229,13 @@ def reset_student_attempts(course_id, student, module_state_key, delete_module=F
                 except StudentModule.DoesNotExist:
                     # If a particular child doesn't have any state, no big deal, as long as the parent does.
                     pass
+        # Allow the block to reset itself, if it has defined such a method
+        # We trust blocks to clean dependencies as well, so openassessment will clear out any relevant submissions
+        block_reset = getattr(block, "clear_state", None)
+        if callable(block_reset):
+            block_reset(user_id=user_id, delete=delete_module)
     except ItemNotFoundError:
         log.warning("Could not find %s in modulestore when attempting to reset attempts.", module_state_key)
-
-    # Reset the student's score in the submissions API
-    # Currently this is used only by open assessment (ORA 2)
-    # We need to do this *before* retrieving the `StudentModule` model,
-    # because it's possible for a score to exist even if no student module exists.
-    if delete_module:
-        sub_api.reset_student_item(
-            anonymous_id_for_user(student, course_id),
-            course_id.to_deprecated_string(),
-            module_state_key.to_deprecated_string(),
-        )
 
     try:
         module_to_reset = StudentModule.objects.get(

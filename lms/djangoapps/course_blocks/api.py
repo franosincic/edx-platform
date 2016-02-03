@@ -29,7 +29,7 @@ COURSE_BLOCK_ACCESS_TRANSFORMERS = [
 def get_course_blocks(
         user,
         root_block_usage_key,
-        transformers=None
+        transformers=None,
 ):
     """
     A higher order function implemented on top of the

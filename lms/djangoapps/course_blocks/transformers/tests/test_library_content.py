@@ -43,8 +43,6 @@ class ContentLibraryTransformerTestCase(CourseStructureTestCase):
         # Enroll user in course.
         CourseEnrollmentFactory.create(user=self.user, course_id=self.course.id, is_active=True)
 
-        self.selected_module = MockedModule('{"selected": [["vertical", "vertical_vertical2"]]}')
-
     def get_course_hierarchy(self):
         """
         Get a course hierarchy to test with.
@@ -143,8 +141,8 @@ class ContentLibraryTransformerTestCase(CourseStructureTestCase):
 
         # Check course structure again, with mocked selected modules for a user.
         with mock.patch(
-            'course_blocks.transformers.library_content.ContentLibraryTransformer._get_student_module',
-            return_value=self.selected_module
+            'lms.djangoapps.course_blocks.transformers.library_content.ContentLibraryTransformer._get_student_module',
+            return_value=MockedModule('{"selected": [["vertical", "vertical_vertical2"]]}'),
         ):
             clear_course_from_cache(self.course.id)
             trans_block_structure = get_course_blocks(
@@ -165,3 +163,4 @@ class ContentLibraryTransformerTestCase(CourseStructureTestCase):
                     'html1'
                 )
             )
+        self.assertTrue(False)

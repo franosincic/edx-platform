@@ -19,7 +19,7 @@ def get_blocks(
         requested_fields=None,
         block_counts=None,
         student_view_data=None,
-        return_type='dict'
+        return_type='dict',
 ):
     """
     Return a serialized representation of the course blocks.

@@ -1619,11 +1619,11 @@ REQUIRE_ENVIRONMENT = "node"
 #
 # If you want to load JavaScript dependencies using RequireJS
 # but you don't want to include those dependencies in the JS bundle for the page,
-# then you need to add the module and URL path to this dictionary.
-REQUIRE_JS_PATH_OVERRIDES = {
-    'js/bookmarks/views/bookmark_button': 'js/bookmarks/views/bookmark_button.js',
-    'js/views/message_banner': 'js/views/message_banner.js'
-}
+# then you need to add the js urls in this list.
+REQUIRE_JS_PATH_OVERRIDES = [
+    'js/bookmarks/views/bookmark_button.js',
+    'js/views/message_banner.js'
+]
 ################################# CELERY ######################################
 
 # Message configuration

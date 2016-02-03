@@ -7,20 +7,20 @@ from pipeline_mako import render_require_js_path_overrides
 class RequireJSPathOverridesTest(TestCase):
     """Test RequireJS path overrides. """
 
-    OVERRIDES = {
-        'jquery': 'js/vendor/jquery.min.js',
-        'backbone': 'js/vendor/backbone-min.js',
-        'text': 'js/vendor/text.js'
-    }
+    OVERRIDES = [
+        'js/vendor/jquery.min.js',
+        'js/vendor/backbone-min.js',
+        'js/vendor/text.js'
+    ]
 
     OVERRIDES_JS = [
         "<script type=\"text/javascript\">",
         "(function (require) {",
         "require.config({",
         "paths: {",
-        "'jquery': 'js/vendor/jquery.min',",
-        "'text': 'js/vendor/text',",
-        "'backbone': 'js/vendor/backbone-min'",
+        "'js/vendor/jquery.min': 'js/vendor/jquery.min',",
+        "'js/vendor/backbone-min': 'js/vendor/backbone-min',",
+        "'js/vendor/text': 'js/vendor/text'",
         "}",
         "});",
         "}).call(this, require || RequireJS.require);",

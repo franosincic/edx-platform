@@ -95,11 +95,9 @@ def render_require_js_path_overrides(path_overrides):  # pylint: disable=invalid
 
         "js/vendor/jquery.min.js" --> "js/vendor/jquery.min.abcd1234"
 
-    We would then add a line in a <script> tag:
+    To achive this we will add overrided paths in requirejs config at runtime.
 
-        require.paths['jquery'] = 'js/vendor/jquery.min.abcd1234'
-
-    so that any reference to 'jquery' in a JavaScript module
+    So that any reference to 'jquery' in a JavaScript module
     will cause RequireJS to load '/static/js/vendor/jquery.min.abcd1234.js'
 
     If running in DEBUG mode (as in devstack), the resolved JavaScript URLs
@@ -130,7 +128,7 @@ def render_require_js_path_overrides(path_overrides):  # pylint: disable=invalid
     </script>'''
 
     new_paths = []
-    for module, url_path in path_overrides.iteritems():
+    for url_path in path_overrides:
         # Calculate the full URL, including any hashes added to the filename by the pipeline.
         # This will also include the base static URL (for example, "/static/") and the
         # ".js" extension.
@@ -141,6 +139,6 @@ def render_require_js_path_overrides(path_overrides):  # pylint: disable=invalid
         # RequireJS also already has a base URL set to the base static URL, so we can remove that.
         path = actual_url.replace('.js', '').replace(django_settings.STATIC_URL, '')
 
-        new_paths.append("'{module}': '{path}'".format(module=module, path=path))
+        new_paths.append("'{module}': '{path}'".format(module=url_path.replace('.js', ''), path=path))
 
     return html.format(overrides=',\n'.join(new_paths))

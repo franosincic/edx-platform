@@ -36,18 +36,18 @@ class TestBlockStructureTransformers(ChildrenMapTestMixin, TestCase):
 
     def test_add_registered(self):
         self.add_mock_transformer()
-        self.assertIn(MockTransformer, self.transformers.transformers)
+        self.assertIn(MockTransformer, self.transformers._transformers)  # pylint: disable=protected-access
 
     def test_add_unregistered(self):
         with self.assertRaises(TransformerException):
             self.transformers += [self.UnregisteredTransformer]
 
-        self.assertEquals(self.transformers.transformers, [])
+        self.assertEquals(self.transformers._transformers, [])  # pylint: disable=protected-access
 
     def test_collect(self):
         with mock_registered_transformers(self.registered_transformers):
             with patch(
-                'openedx.core.lib.block_structure.tests.test_utils.MockTransformer.collect'
+                'openedx.core.lib.block_structure.tests.helpers.MockTransformer.collect'
             ) as mock_collect_call:
                 self.transformers.collect(block_structure=MagicMock())
                 self.assertTrue(mock_collect_call.called)
@@ -56,7 +56,7 @@ class TestBlockStructureTransformers(ChildrenMapTestMixin, TestCase):
         self.add_mock_transformer()
 
         with patch(
-            'openedx.core.lib.block_structure.tests.test_utils.MockTransformer.transform'
+            'openedx.core.lib.block_structure.tests.helpers.MockTransformer.transform'
         ) as mock_transform_call:
             self.transformers.transform(block_structure=MagicMock())
             self.assertTrue(mock_transform_call.called)

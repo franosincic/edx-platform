@@ -12,7 +12,7 @@ from edx_proctoring.api import (
 from edx_proctoring.models import ProctoredExamStudentAttemptStatus
 from edx_proctoring.runtime import set_runtime_service
 from edx_proctoring.tests.test_services import MockCreditService
-from lms.djangoapps.course_blocks.transformers.tests.test_helpers import CourseStructureTestCase
+from lms.djangoapps.course_blocks.transformers.tests.helpers import CourseStructureTestCase
 from student.tests.factories import CourseEnrollmentFactory
 
 from ..proctored_exam import ProctoredExamTransformer

@@ -4,10 +4,11 @@ Tests for ContentLibraryTransformer.
 import mock
 from student.tests.factories import CourseEnrollmentFactory
 
-from course_blocks.transformers.library_content import ContentLibraryTransformer
-from course_blocks.api import get_course_blocks, clear_course_from_cache
-from lms.djangoapps.course_blocks.transformers.tests.test_helpers import CourseStructureTestCase
 from openedx.core.lib.block_structure.transformers import BlockStructureTransformers
+
+from ...api import get_course_blocks, clear_course_from_cache
+from ..library_content import ContentLibraryTransformer
+from .helpers import CourseStructureTestCase
 
 
 class MockedModule(object):

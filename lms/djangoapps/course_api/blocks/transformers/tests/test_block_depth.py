@@ -7,7 +7,7 @@ Tests for BlockDepthTransformer.
 import ddt
 from unittest import TestCase
 
-from openedx.core.lib.block_structure.tests.test_utils import ChildrenMapTestMixin
+from openedx.core.lib.block_structure.tests.helpers import ChildrenMapTestMixin
 from openedx.core.lib.block_structure.block_structure import BlockStructureModulestoreData
 from ..block_depth import BlockDepthTransformer
 

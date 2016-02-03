@@ -190,6 +190,12 @@ FEATURES = {
     'ENABLE_SPECIAL_EXAMS': False,
 
     'ORGANIZATIONS_APP': False,
+
+    # Expiry Date default value of 7 days
+    'EXPIRY_DATE_DEFAULT': 7,
+
+    # Enable temporary user
+    'ENABLE_TEMP_USER': True,
 }
 
 ENABLE_JASMINE = False

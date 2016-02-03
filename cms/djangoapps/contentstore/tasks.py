@@ -18,6 +18,15 @@ from xmodule.course_module import CourseFields
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import DuplicateCourseError, ItemNotFoundError
 
+from student.models import UserProfile
+from contentstore.utils import delete_course_and_groups
+from search.search_engine_base import SearchEngine
+from contentstore.courseware_index import CourseAboutSearchIndexer
+from contentstore.helpers import (get_courses_accessible_to_user,
+                                  accessible_libraries_list,
+                                  format_course_for_view,
+                                  format_library_for_view)
+
 LOGGER = get_task_logger(__name__)
 FULL_COURSE_REINDEX_THRESHOLD = 1
 
@@ -32,7 +41,6 @@ def rerun_course(source_course_key_string, destination_course_key_string, user_i
 
     try:
         # deserialize the payload
-        source_course_key = CourseKey.from_string(source_course_key_string)
         destination_course_key = CourseKey.from_string(destination_course_key_string)
         fields = deserialize_fields(fields) if fields else None
 
@@ -125,3 +133,49 @@ def push_course_update_task(course_key_string, course_subscription_id, course_di
     # TODO Use edx-notifications library instead (MA-638).
     from .push_notification import send_push_course_update
     send_push_course_update(course_key_string, course_subscription_id, course_display_name)
+
+
+@task()
+def delete_course_task(user_id, course_key_string):
+
+    profile = UserProfile.objects.get(pk=user_id)
+    user = User.objects.get(pk=profile.user_id)
+
+    course_key = CourseKey.from_string(course_key_string)
+    delete_course_and_groups(course_key, user.id)
+    searcher = SearchEngine.get_search_engine(CoursewareSearchIndexer.INDEX_NAME)
+    if searcher != None:
+        CoursewareSearchIndexer.remove_deleted_items(searcher, CourseKey.from_string(course_key_string), [])
+        searcher.remove(CourseAboutSearchIndexer.DISCOVERY_DOCUMENT_TYPE, [course_key_string])
+
+
+@task()
+def delete_library_task(user_id, library_key_string):
+
+    profile = UserProfile.objects.get(pk=user_id)
+    user = User.objects.get(pk=profile.user_id)
+
+    library_key = CourseKey.from_string(library_key_string)
+    delete_course_and_groups(library_key, user.id)
+
+
+@task()
+def delete_temp_user_task(request, user_id):
+
+    profile = UserProfile.objects.get(pk=user_id)
+    user = User.objects.get(pk=profile.user_id)
+
+    courses = [format_course_for_view(c) for c in get_courses_accessible_to_user(request, user)[0]]
+    libraries = [format_library_for_view(lib, user) for lib in accessible_libraries_list(user)]
+
+    for course in courses:
+        course_key = CourseKey.from_string(course["course_key"])
+        delete_course_and_groups(course_key, user.id)
+        searcher = SearchEngine.get_search_engine(CoursewareSearchIndexer.INDEX_NAME)
+        if searcher != None:
+            CoursewareSearchIndexer.remove_deleted_items(searcher, CourseKey.from_string(course_key_string), [])
+            searcher.remove(CourseAboutSearchIndexer.DISCOVERY_DOCUMENT_TYPE, [course_key_string])
+
+    for library in libraries:
+        library_key = CourseKey.from_string(library['library_key'])
+        delete_course_and_groups(library_key, user.id)

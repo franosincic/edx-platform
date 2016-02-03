@@ -236,6 +236,9 @@ class UserProfile(models.Model):
     language = models.CharField(blank=True, max_length=255, db_index=True)
     location = models.CharField(blank=True, max_length=255, db_index=True)
 
+    temp_user = models.BooleanField(blank=True, default=False)
+    expiry_date = models.DateTimeField(blank=True, null=True)
+
     # Optional demographic data we started capturing from Fall 2012
     this_year = datetime.now(UTC).year
     VALID_YEARS = range(this_year, this_year - 120, -1)

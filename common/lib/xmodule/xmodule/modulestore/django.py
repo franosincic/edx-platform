@@ -90,6 +90,9 @@ class SignalHandler(object):
     course_published = django.dispatch.Signal(providing_args=["course_key"])
     course_deleted = django.dispatch.Signal(providing_args=["course_key"])
     library_updated = django.dispatch.Signal(providing_args=["library_key"])
+    deleted_course = django.dispatch.Signal(providing_args=["user_id", "course_key_string"])
+    deleted_library = django.dispatch.Signal(providing_args=["user_id", "library_key_string"])
+    deleted_temp_user = django.dispatch.Signal(providing_args=["request", "user_id"])
     item_deleted = django.dispatch.Signal(providing_args=["usage_key", "user_id"])
 
     _mapping = {
@@ -97,6 +100,9 @@ class SignalHandler(object):
         "course_published": course_published,
         "course_deleted": course_deleted,
         "library_updated": library_updated,
+        "deleted_course": deleted_course,
+        "deleted_library": deleted_library,
+        "deleted_temp_user": deleted_temp_user,
         "item_deleted": item_deleted,
     }
 

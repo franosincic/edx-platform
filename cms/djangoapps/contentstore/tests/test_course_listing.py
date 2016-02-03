@@ -11,9 +11,11 @@ import ddt
 from django.test import RequestFactory
 from xmodule.course_module import CourseSummary
 
-from contentstore.views.course import (_accessible_courses_list, _accessible_courses_list_from_groups,
-                                       AccessListFallback, get_courses_accessible_to_user,
-                                       _accessible_courses_summary_list)
+from contentstore.views.course import _accessible_courses_summary_list
+from contentstore.helpers import (AccessListFallback, 
+                                    get_courses_accessible_to_user, 
+                                    _accessible_courses_list_from_groups, 
+                                    _accessible_courses_list)
 from contentstore.utils import delete_course_and_groups
 from contentstore.tests.utils import AjaxEnabledTestClient
 from student.tests.factories import UserFactory

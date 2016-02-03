@@ -254,6 +254,7 @@ class ProctoredExamsTest(BaseInstructorDashboardTest):
         # Stop the timed exam.
         self.courseware_page.stop_timed_exam()
 
+    @flaky(max_runs=50, min_passes=50)
     def test_can_add_remove_allowance(self):
         """
         Make sure that allowances can be added and removed.
